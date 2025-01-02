@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:netflix/common/utils.dart';
 import 'package:netflix/models/movie_details.dart';
+import 'package:netflix/models/movie_recommentations.dart';
+import 'package:netflix/models/now_playing_movies.dart';
 import 'package:netflix/models/popular_movies.dart';
 import 'package:netflix/models/searched_movies.dart';
 import 'package:netflix/models/top_rated_series.dart';
@@ -27,14 +29,14 @@ class ApiServices {
     throw Exception('failed to load upcoming movies');
   }
 
-  Future<UpcomingMovies> getNowPlayingMovies() async {
+  Future<NowPlayingMovies> getNowPlayingMovies() async {
     endPoint = 'movie/now_playing';
     String url = '$baseUrl$endPoint$key';
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       log('success');
-      return UpcomingMovies.fromJson(jsonDecode(response.body));
+      return NowPlayingMovies.fromJson(jsonDecode(response.body));
     }
     throw Exception('failed to load upcoming movies');
   }
@@ -95,7 +97,8 @@ class ApiServices {
     }
     throw Exception('failed to load searched movie');
   }
-  Future<PopularMovies> getMovieRecommentations(int movieId) async {
+
+  Future<MovieRecommentations> getMovieRecommentations(int movieId) async {
     endPoint = 'movie/$movieId/recommentations';
     final url = '$baseUrl$endPoint$key';
     print(url);
@@ -104,7 +107,7 @@ class ApiServices {
 
     if (response.statusCode == 200) {
       log('success');
-      return PopularMovies.fromJson(jsonDecode(response.body));
+      return MovieRecommentations.fromJson(jsonDecode(response.body));
     }
     throw Exception('failed to load searched movie');
   }

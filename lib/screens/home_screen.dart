@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:netflix/common/utils.dart';
+import 'package:netflix/models/now_playing_movies.dart';
 import 'package:netflix/models/top_rated_series.dart';
 import 'package:netflix/models/upcoming_movies.dart';
 import 'package:netflix/screens/search.dart';
 import 'package:netflix/services/api_services.dart';
 import 'package:netflix/widgets/custom_carousel.dart';
-import 'package:netflix/widgets/movie_card.dart';
+import 'package:netflix/widgets/now_playing_movie_card.dart';
+import 'package:netflix/widgets/upcoming_movie_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late Future<UpcomingMovies> upcomingMovies;
   late Future<TopRatedSeries> topRatedSeries;
-  late Future<UpcomingMovies> nowPlayingMovies;
+  late Future<NowPlayingMovies> nowPlayingMovies;
 
   ApiServices apiServices = ApiServices();
 
@@ -110,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           padding: const EdgeInsets.all(15.0),
                           child: SizedBox(
                             height: 220,
-                            child: MovieCard(
+                            child: NowPlayingMovieCard(
                                 movies: nowPlayingMovies,
                                 header: 'Now Playing'),
                           ),
@@ -119,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           padding: const EdgeInsets.all(15.0),
                           child: SizedBox(
                             height: 220,
-                            child: MovieCard(
+                            child: UpcomingMovieCard(
                                 movies: upcomingMovies,
                                 header: 'Upcoming Movies'),
                           ),

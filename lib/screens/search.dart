@@ -121,15 +121,15 @@ class _SearchState extends State<Search> {
                                             const EdgeInsets.only(bottom: 10.0),
                                         child: GestureDetector(
                                           onTap: () {
-                                          //   Navigator.of(context).push(
-                                          //       MaterialPageRoute(
-                                          //           builder: (ctx) =>
-                                          //               DetailedInfo(
-                                          //                 movieId: snapshot
-                                          //                     .data!
-                                          //                     .results[index]
-                                          //                     .id,
-                                          //               )));
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (ctx) =>
+                                                        DetailedInfo(
+                                                          movieId: snapshot
+                                                              .data!
+                                                              .results[index]
+                                                              .id,
+                                                        )));
                                           },
                                           child: Row(
                                             children: [
