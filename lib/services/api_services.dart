@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:netflix/common/utils.dart';
 import 'package:netflix/models/movie_details.dart';
-import 'package:netflix/models/movie_recommentations.dart';
+import 'package:netflix/models/movie_recommendations.dart';
 import 'package:netflix/models/now_playing_movies.dart';
 import 'package:netflix/models/popular_movies.dart';
 import 'package:netflix/models/searched_movies.dart';
@@ -56,7 +56,7 @@ class ApiServices {
   Future<SearchedMovies> getSearchedovie(String searchKeyWord) async {
     endPoint = 'search/movie?query=$searchKeyWord';
     final url = '$baseUrl$endPoint';
-    print(url);
+    log(url);
     final response = await http.get(Uri.parse(url), headers: {
       'Authorization':
           'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3ZWYyZWU1YzJhNjM4NzZmMDU1OWViYjM5YTc3NDJjYyIsIm5iZiI6MTczNDk0NjU3OC42MDgsInN1YiI6IjY3NjkyZjEyODVkOTJmYTZhZDVjZTU2YiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.tQbiNe3gL_FKyPxUDm9yTgptyUYe71_Y-uvbuJiTxeo'
@@ -73,7 +73,7 @@ class ApiServices {
   Future<PopularMovies> getPopularMovies() async {
     endPoint = 'movie/popular';
     final url = '$baseUrl$endPoint$key';
-    print(url);
+    log(url);
     final response = await http.get(Uri.parse(url));
     log(response.statusCode.toString());
 
@@ -87,7 +87,7 @@ class ApiServices {
   Future<MovieDetails> getMovieDetails(int id) async {
     endPoint = 'movie/$id';
     final url = '$baseUrl$endPoint$key';
-    print(url);
+    log(url);
     final response = await http.get(Uri.parse(url));
     log(response.statusCode.toString());
 
@@ -98,17 +98,22 @@ class ApiServices {
     throw Exception('failed to load searched movie');
   }
 
-  Future<MovieRecommentations> getMovieRecommentations(int movieId) async {
-    endPoint = 'movie/$movieId/recommentations';
+  Future<MovieRecommendations?> getMovieRecommentations(int movieId) async {
+    endPoint = 'movie/$movieId/recommendations';
     final url = '$baseUrl$endPoint$key';
-    print(url);
-    final response = await http.get(Uri.parse(url));
-    log(response.statusCode.toString());
+    log(url);
+    try {
+      final response = await http.get(Uri.parse(url));
+      log(response.statusCode.toString());
+      // log(response.body);
 
-    if (response.statusCode == 200) {
-      log('success');
-      return MovieRecommentations.fromJson(jsonDecode(response.body));
+      if (response.statusCode == 200) {
+        log('success');
+        return MovieRecommendations.fromJson(jsonDecode(response.body));
+      }
+    } catch (error) {
+      log('error fetching recommendations $error');
     }
-    throw Exception('failed to load searched movie');
+    return null;
   }
 }

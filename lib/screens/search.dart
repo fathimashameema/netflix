@@ -177,11 +177,11 @@ class _SearchState extends State<Search> {
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                 onTap: () {
-                                  // Navigator.of(context).push(MaterialPageRoute(
-                                  //     builder: (ctx) => DetailedInfo(
-                                  //           movieId: searchedMovie!
-                                  //               .results[index].id,
-                                  //         )));
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (ctx) => DetailedInfo(
+                                            movieId: searchedMovie!
+                                                .results[index].id,
+                                          )));
                                 },
                                 child: Column(
                                   children: [

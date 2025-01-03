@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:netflix/common/utils.dart';
 import 'package:netflix/models/movie_details.dart';
-import 'package:netflix/models/movie_recommentations.dart';
+import 'package:netflix/models/movie_recommendations.dart';
 import 'package:netflix/services/api_services.dart';
 
 class DetailedInfo extends StatefulWidget {
@@ -16,7 +16,7 @@ class DetailedInfo extends StatefulWidget {
 class _DetailedInfoState extends State<DetailedInfo> {
   ApiServices apiServices = ApiServices();
   late Future<MovieDetails> movieDetails;
-  late Future<MovieRecommentations> movieRecommentations;
+  late Future<MovieRecommendations?> movieRecommentations;
 
   @override
   void initState() {
@@ -40,6 +40,7 @@ class _DetailedInfoState extends State<DetailedInfo> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final data = snapshot.data;
+                // print(data!.id);
                 String genre =
                     data!.genres.map((genre) => genre.name).join(', ');
                 return Column(
@@ -47,11 +48,11 @@ class _DetailedInfoState extends State<DetailedInfo> {
                     Stack(
                       children: [
                         Container(
-                            height: MediaQuery.of(context).size.height * 0.5,
+                            height: MediaQuery.of(context).size.height * 0.6,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: NetworkImage(
-                                  '$imageUrl${data!.posterPath}',
+                                  '$imageUrl${data.posterPath}',
                                 ),
                                 fit: BoxFit.cover,
                               ),
@@ -66,7 +67,7 @@ class _DetailedInfoState extends State<DetailedInfo> {
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
-                                      icon: Icon(
+                                      icon: const Icon(
                                         Icons.arrow_back_ios,
                                       )),
                                 ],
@@ -82,48 +83,48 @@ class _DetailedInfoState extends State<DetailedInfo> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Text(
                             data.title,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 15,
                           ),
                           Row(
                             children: [
                               Text(
                                 data.releaseDate.year.toString(),
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.grey,
                                   fontSize: 17,
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 30,
                               ),
                               Text(
                                 genre,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.grey,
                                   fontSize: 17,
                                 ),
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 30,
                           ),
                           Text(
                             data.overview,
                             maxLines: 6,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 17,
                             ),
@@ -131,7 +132,7 @@ class _DetailedInfoState extends State<DetailedInfo> {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
                     FutureBuilder(
@@ -139,37 +140,69 @@ class _DetailedInfoState extends State<DetailedInfo> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             final recommentations = snapshot.data;
+
                             return recommentations!.results.isEmpty
-                                ? SizedBox()
-                                : Column(
-                                    children: [
-                                      Text(
-                                        'More like this :',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      GridView.builder(
-                                          shrinkWrap: true,
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          itemCount:
-                                              recommentations.results.length,
-                                          gridDelegate:
-                                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 3,
-                                            mainAxisSpacing: 15,
-                                            crossAxisSpacing: 10,
-                                            childAspectRatio: 1.5 / 2,
-                                          ),
-                                          itemBuilder: (context, index) {
-                                            return CachedNetworkImage(
-                                              imageUrl:
-                                                  '$imageUrl${recommentations.results[index].posterPath}',
-                                            );
-                                          })
-                                    ],
+                                ? const SizedBox()
+                                : Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 10.0,
+                                      right: 10,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'More like this :',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        GridView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemCount:
+                                                recommentations.results.length,
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 3,
+                                              mainAxisSpacing: 15,
+                                              crossAxisSpacing: 10,
+                                              childAspectRatio: 1.5 / 2,
+                                            ),
+                                            itemBuilder: (context, index) {
+                                              return recommentations
+                                                          .results[index]
+                                                          .posterPath ==
+                                                      null
+                                                  ? Image.asset(
+                                                      'assets/netflix.png',
+                                                      height: 170,
+                                                    )
+                                                  : InkWell(
+                                                      onTap: () {
+                                                        Navigator.of(context).push(
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (cntxt) {
+                                                          return DetailedInfo(
+                                                              movieId:
+                                                                  recommentations
+                                                                      .results[
+                                                                          index]
+                                                                      .id);
+                                                        }));
+                                                      },
+                                                      child: CachedNetworkImage(
+                                                        imageUrl:
+                                                            '$imageUrl${recommentations.results[index].posterPath}',
+                                                      ),
+                                                    );
+                                            })
+                                      ],
+                                    ),
                                   );
                           } else if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -182,8 +215,13 @@ class _DetailedInfoState extends State<DetailedInfo> {
                                 ),
                               ),
                             );
+                          } else if (snapshot.data == null) {
+                            return const Text('No recommendations available');
+                          } else if (snapshot.hasError) {
+                            print('error is : ${snapshot.error.runtimeType}');
+                            return const Text('some error occurs');
                           } else {
-                            return SizedBox();
+                            return const Text('something happened');
                           }
                         })
                   ],
@@ -199,7 +237,7 @@ class _DetailedInfoState extends State<DetailedInfo> {
                   ),
                 );
               } else {
-                return SizedBox();
+                return const SizedBox();
               }
             }),
       ),
